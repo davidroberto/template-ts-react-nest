@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { greetFromShared, User } from '@app/shared/test';
+import { greetFromShared, User } from '@workspace/shared/test';
 
 @Injectable()
 export class AppService {

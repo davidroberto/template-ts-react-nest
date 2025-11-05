@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/root/.npm \
 FROM node:25-slim AS build
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /workspace/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
@@ -18,10 +18,10 @@ FROM node:25-slim AS prod
 RUN useradd -m -r nodeusr
 WORKDIR /app
 
-COPY --from=deps  /app/node_modules ./node_modules
+COPY --from=deps  /workspace/node_modules ./node_modules
 
-COPY --from=build /app/dist          ./dist
-COPY --from=build /app/package.json  ./
+COPY --from=build /workspace/dist          ./dist
+COPY --from=build /workspace/package.json  ./
 
 # si besoin d'uploads
 #RUN mkdir -p /app/uploads && chown -R nodeusr:nodeusr /app/uploads

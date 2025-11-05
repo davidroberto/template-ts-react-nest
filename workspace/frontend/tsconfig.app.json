@@ -19,7 +19,7 @@
     /* Path mappings */
     "baseUrl": ".",
     "paths": {
-      "@app/shared/*": ["../shared/src/*"]
+      "@workspace/shared/*": ["../shared/src/*"]
     },
 
     /* Linting */

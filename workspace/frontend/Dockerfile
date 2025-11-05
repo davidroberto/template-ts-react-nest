@@ -16,7 +16,7 @@ WORKDIR /app
 
 RUN npm install -g serve
 
-COPY --from=build /app/dist ./dist
+COPY --from=build /workspace/dist ./dist
 
 USER nodeusr
 ENV PORT=3000

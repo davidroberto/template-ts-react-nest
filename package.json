@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "app/frontend",
-    "app/backend",
-    "app/shared"
+    "workspace/frontend",
+    "workspace/backend",
+    "workspace/shared"
   ]
 }

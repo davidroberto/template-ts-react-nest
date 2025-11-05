@@ -6,19 +6,20 @@ WORKDIR /app
 COPY package.json ./
 
 # Copy workspace package.json files (maintain same structure as host)
-COPY app/frontend/package*.json ./app/frontend/
-COPY app/shared/package*.json ./app/shared/
+COPY workspace/frontend/package*.json ./workspace/frontend/
+COPY workspace/shared/package*.json ./workspace/shared/
+COPY workspace/backend/package*.json ./workspace/backend/
 
 # Install workspace dependencies with platform-specific builds
 RUN npm install --force
 
 # Copy shared source
-COPY app/shared ./app/shared
+COPY workspace/shared ./workspace/shared
 
 # Copy frontend source
-COPY app/frontend ./app/frontend
+COPY workspace/frontend ./workspace/frontend
 
-WORKDIR /app/app/frontend
+WORKDIR /app/workspace/frontend
 
 EXPOSE 3000
 
