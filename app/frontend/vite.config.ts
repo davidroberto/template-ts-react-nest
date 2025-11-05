@@ -28,7 +28,11 @@ export default {
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@src': path.resolve(__dirname, 'src'),
+      '@app/shared': path.resolve(__dirname, '../shared/src'),
     },
+  },
+  optimizeDeps: {
+    include: ['@app/shared'],
   },
   test: {
     include: ['src/*.spec.ts', 'src/*.spec.tsx'],

@@ -1,0 +1,25 @@
+FROM node:25-slim
+
+WORKDIR /app
+
+# Copy root package.json for workspace configuration
+COPY package.json ./
+
+# Copy workspace package.json files (maintain same structure as host)
+COPY app/frontend/package*.json ./app/frontend/
+COPY app/shared/package*.json ./app/shared/
+
+# Install workspace dependencies with platform-specific builds
+RUN npm install --force
+
+# Copy shared source
+COPY app/shared ./app/shared
+
+# Copy frontend source
+COPY app/frontend ./app/frontend
+
+WORKDIR /app/app/frontend
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "npm run dev"]

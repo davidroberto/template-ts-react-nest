@@ -1,0 +1,33 @@
+FROM node:25-slim
+
+WORKDIR /app
+
+COPY app/backend/.dockerignore.dev .dockerignore
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends procps \
+  && rm -rf /var/lib/apt/lists/*
+
+# Copy root package.json for workspace configuration
+COPY package.json ./
+
+# Copy workspace package.json files (maintain same structure as host)
+COPY app/backend/package*.json ./app/backend/
+COPY app/shared/package*.json ./app/shared/
+
+# Install workspace dependencies with platform-specific builds
+RUN npm install --force
+
+RUN npm install -g @nestjs/cli
+
+# Copy shared source
+COPY app/shared ./app/shared
+
+# Copy backend source
+COPY app/backend ./app/backend
+
+WORKDIR /app/app/backend
+
+EXPOSE 5000
+
+CMD ["sh", "-c", "npm run start:dev"]

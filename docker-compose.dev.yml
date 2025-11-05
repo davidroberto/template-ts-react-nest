@@ -1,8 +1,8 @@
 services:
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: app/frontend/Dockerfile.dev
     ports:
       - "${FRONTEND_HOST_PORT}:${FRONTEND_CONTAINER_PORT}"
     depends_on:
@@ -10,16 +10,19 @@ services:
     networks:
       template-ts-react-nest:
     volumes:
-      - ./frontend:/app
+      - ./app/frontend:/app/app/frontend
+      - ./app/shared:/app/app/shared
+      - ./package.json:/app/package.json
       - /app/node_modules
+      - /app/app/frontend/node_modules
 
     environment:
       - ENV_MODE=${ENV_MODE:-development}
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: app/backend/Dockerfile.dev
       args:
         - DOCKERIGNORE_FILE=.dockerignore.dev
     ports:
@@ -31,8 +34,11 @@ services:
 
     volumes:
       - ./datafiles:/app/datafiles
-      - ./backend:/app
+      - ./app/backend:/app/app/backend
+      - ./app/shared:/app/app/shared
+      - ./package.json:/app/package.json
       - /app/node_modules
+      - /app/app/backend/node_modules
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
@@ -59,7 +65,7 @@ services:
 
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.29.3
     ports:
       - "${NGINX_HOST_PORT}:${NGINX_CONTAINER_PORT}"
       - "443:443"

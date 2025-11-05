@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { greetFromShared } from '@app/shared/test'
 
 function App() {
   const [count, setCount] = useState(0)
   const [message, setMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(true)
+  const [sharedMessage] = useState<string>(greetFromShared('Frontend'))
 
   useEffect(() => {
     fetch('/api')
@@ -36,6 +38,10 @@ function App() {
       <div className="card">
         <h2>Message from API:</h2>
         {loading ? <p>Loading...</p> : <p>{message}</p>}
+      </div>
+      <div className="card">
+        <h2>Message from Shared Package:</h2>
+        <p>{sharedMessage}</p>
       </div>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
