@@ -1,0 +1,21 @@
+FROM node:25-slim
+
+WORKDIR /app
+
+COPY .dockerignore.dev .dockerignore
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends procps \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY package*.json ./
+
+RUN npm install
+
+RUN npm install -g @nestjs/cli
+
+COPY . .
+
+EXPOSE 5000
+
+CMD ["sh", "-c", "npm run start:dev"]
