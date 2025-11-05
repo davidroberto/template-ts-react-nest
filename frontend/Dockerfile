@@ -1,0 +1,25 @@
+FROM node:25-slim AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+
+FROM node:25-slim AS prod
+
+RUN useradd -m -r nodeusr
+WORKDIR /app
+
+RUN npm install -g serve
+
+COPY --from=build /app/dist ./dist
+
+USER nodeusr
+ENV PORT=3000
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000"]
