@@ -1,5 +1,5 @@
 import fastify from 'fastify'
-import { greetFromShared } from '@workspace/shared'
+import { greetFromShared } from '@workspace/shared/test'
 
 const server = fastify()
 
