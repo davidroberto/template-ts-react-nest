@@ -16,6 +16,13 @@ export default {
     //   cert: fs.readFileSync('./certs/cert.pem'),
     // },
     allowedHosts: ["nomdedomainlocalvoulu.local"],
+    watch: {
+      usePolling: true,
+    },
+    hmr: {
+      host: 'nomdedomainlocalvoulu.local',
+      protocol: 'ws',
+    },
     proxy: {
       '/api': {
         target: 'http://nginx', // Redirige vers Nginx (qui envoie à backend:5000)

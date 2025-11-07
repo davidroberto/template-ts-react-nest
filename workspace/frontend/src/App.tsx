@@ -11,7 +11,7 @@ function App() {
   const [sharedMessage] = useState<string>(greetFromShared('Frontend'))
 
   useEffect(() => {
-    fetch('/api')
+    fetch('/api/healthcheck')
       .then(response => response.text())
       .then(data => {
         setMessage(data)

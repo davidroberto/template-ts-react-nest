@@ -1,12 +1,15 @@
 import fastify from 'fastify'
+import { greetFromShared } from '@workspace/shared'
 
 const server = fastify()
 
-server.get('/ping', async (request, reply) => {
-    return 'pong\n'
+server.get('/healthcheck', async (request, reply) => {
+    return greetFromShared("Hello from Fastify!")
 })
 
-server.listen({ port: 5000, host: '0.0.0.0' }, (err, address) => {
+const port = parseInt(process.env.APP_PORT || '5000', 10)
+
+server.listen({ port, host: '0.0.0.0' }, (err, address) => {
     if (err) {
         console.error(err)
         process.exit(1)

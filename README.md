@@ -4,13 +4,13 @@
 - Copiez le fichier `.env` en `.env.local` et modifiez les variables d'environnement
 - Modifiez les DNS de votre machine pour associer "nomdedomainlocalvoulu.local" vers 127.0.0.1 (Pris en charge par le conteneur Nginx qui route vers le service frontend)
 - Ajouter "nomdedomainlocalvoulu.local" en server_name dans le fichier nginx.conf.dev en frontend
-- Ajouter "nomdedomainlocalvoulu.local" aux server.allowedHosts du fichier vite.config.ts en frontend
+- Ajouter "nomdedomainlocalvoulu.local" aux server.allowedHosts et au hmr.host (pour le hot reload) du fichier vite.config.ts en frontend
 
 ### RUN: 
 
 - `docker compose --env-file .env.local -f docker-compose.dev.yml up` pour lancer l'application en dev accessible sur `http://nomdedomainlocalvoulu.local`**
 - Le frontend est accessible sur `http://nomdedomainlocalvoulu.local` avec la page d'accueil par défaut de vite
-- Le backend est accessible sur `http://nomdedomainlocalvoulu.local/api avec le endpoint en GET par défaut ("hello")
+- Le backend est accessible sur `http://nomdedomainlocalvoulu.local/api/healthcheck avec le endpoint en GET par défaut ("hello from shared")
 
 ### DEPLOY:
 

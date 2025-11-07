@@ -1,5 +1,5 @@
 export const greetFromShared = (name: string): string => {
-  return `Hello ${name} from shared package!`;
+  return `Hello ${name} from shared ssspackassgssse!`;
 };
 
 export interface User {
