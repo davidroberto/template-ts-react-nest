@@ -33,7 +33,6 @@
 /redis_data
 
 .env.local
-.env
 /node_modules
 .idea
 /idea
