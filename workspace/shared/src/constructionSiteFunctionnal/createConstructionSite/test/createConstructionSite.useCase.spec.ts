@@ -1,20 +1,23 @@
 import {beforeEach, describe, expect, test} from "vitest";
 import {randomUUID} from "crypto";
-import {CreateConstructionSiteUseCase} from "../createConstructionSite.commandHandler";
+import {GenericCommandHandler} from "../../genericCommandHandler";
 import {InMemoryEventStoreRepository} from "../../../shared/eventStoreRepository.inMemory";
+import {CreateConstructionSiteCommand} from "../createConstructionSite.command";
 
 describe('US-1: Création d\'un chantier', () => {
 
     let eventStoreRepository: InMemoryEventStoreRepository;
+    let commandHandler: GenericCommandHandler;
 
     beforeEach(() => {
         eventStoreRepository = new InMemoryEventStoreRepository();
+        commandHandler = new GenericCommandHandler(eventStoreRepository);
     })
 
     test('US-1-AC-1: création réussie', async () => {
 
         //Etant donné que je suis identifié en tant sarah, administrateur,
-        const createConstructionSiteUseCase = new CreateConstructionSiteUseCase(eventStoreRepository);
+        // Le handler générique est créé dans beforeEach
 
         //Quand je créé un chantier avec :
         // titre : Elagage Val louron
@@ -22,18 +25,23 @@ describe('US-1: Création d\'un chantier', () => {
         // date de fin : 30 novembre 2025
         // Lieu : Le Forum, 65240 VAL LOURON
         const constructionSiteId = randomUUID();
-        await createConstructionSiteUseCase.execute({
+
+        // ✅ Créer une commande directement (format partagé front/back)
+        const command: CreateConstructionSiteCommand = {
             type: "CreateConstructionSite",
-            commandId: randomUUID(),
-            payload: {
-                id: constructionSiteId,
-                title: "Elagage Val louron",
-                startDate: "20/11/2025",
-                endDate: "30/11/2025",
-                location: "Le Forum, 65240 VAL LOURON",
-                creatorId: "user-sarah"
-            }
-        });
+            id: constructionSiteId,
+            title: "Elagage Val louron",
+            startDate: "20/11/2025",
+            endDate: "30/11/2025",
+            location: "Le Forum, 65240 VAL LOURON",
+            creatorId: "user-sarah"
+        };
+
+        // ✅ Utiliser le handler générique
+        const result = await commandHandler.execute(command);
+
+        // Vérifier le résultat
+        expect(result.success).toBe(true);
 
         // Alors le chantier doit être créé avec ces infos
         const events = await eventStoreRepository.getEventsByAggregateId(constructionSiteId);
