@@ -1,14 +1,18 @@
 import {CreateConstructionSiteCommand} from "./createConstructionSite.command";
-import {ConstructionSiteCreated} from "./constructionSiteCreated.event";
-import {ConstructionSiteState, DecideResult} from "../constructionSite";
+import {createConstructionSiteCreatedEvent, ConstructionSiteCreatedEvent} from "./constructionSiteCreated.event";
+import {ConstructionSiteState} from "../constructionSite.state";
+import {DecideResult} from "../../shared/root.decide";
 
 export const decideCreateConstructionSite = (
     command: CreateConstructionSiteCommand,
-    state: ConstructionSiteState
-): DecideResult => {
+    _state: ConstructionSiteState
+): DecideResult<ConstructionSiteCreatedEvent> => {
 
-    const event = new ConstructionSiteCreated(command.id, {
-        id: command.id,
+
+    // validate business rules
+
+    const constructionSiteCreatedEvent = createConstructionSiteCreatedEvent(command.aggregateId, {
+        id: command.aggregateId,
         title: command.title,
         startDate: command.startDate,
         endDate: command.endDate,
@@ -16,5 +20,5 @@ export const decideCreateConstructionSite = (
         creatorId: command.creatorId
     });
 
-    return { success: true, events: [event] };
+    return { success: true, events: [constructionSiteCreatedEvent] };
 };

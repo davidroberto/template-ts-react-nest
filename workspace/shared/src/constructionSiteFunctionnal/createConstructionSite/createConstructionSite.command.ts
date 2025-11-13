@@ -1,7 +1,8 @@
-// Commands
+export const CREATE_CONSTRUCTION_SITE_COMMAND_TYPE = "CreateConstructionSiteCommandType";
+
 export type CreateConstructionSiteCommand = {
-    type: "CreateConstructionSite";
-    id: string;
+    type: typeof CREATE_CONSTRUCTION_SITE_COMMAND_TYPE;
+    aggregateId: string;
     title: string;
     startDate: string;
     endDate: string;

@@ -1,4 +1,4 @@
-import {DomainEvent} from "../../shared/domainEvent";
+import {DomainEvent} from "../../shared/domain.event";
 
 export const CONSTRUCTION_SITE_CREATED = "constructionSiteCreated";
 

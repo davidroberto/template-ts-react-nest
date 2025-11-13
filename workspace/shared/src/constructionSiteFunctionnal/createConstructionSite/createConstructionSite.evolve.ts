@@ -1,9 +1,9 @@
-import {ConstructionSiteCreated} from "./constructionSiteCreated.event";
-import {ConstructionSiteState} from "../constructionSite";
+import {ConstructionSiteState} from "../constructionSite.state";
+import {ConstructionSiteCreatedEvent} from "./constructionSiteCreated.event";
 
 export const evolveConstructionSiteCreated = (
     _state: ConstructionSiteState,
-    event: ConstructionSiteCreated
+    event: ConstructionSiteCreatedEvent
 ): ConstructionSiteState => {
     return {
         id: event.payload.id,

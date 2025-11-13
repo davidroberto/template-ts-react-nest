@@ -1,23 +1,22 @@
 import {beforeEach, describe, expect, test} from "vitest";
 import {randomUUID} from "crypto";
-import {GenericCommandHandler} from "../../genericCommandHandler";
-import {InMemoryEventStoreRepository} from "../../../shared/eventStoreRepository.inMemory";
-import {CreateConstructionSiteCommand} from "../createConstructionSite.command";
+import {CREATE_CONSTRUCTION_SITE_COMMAND_TYPE, CreateConstructionSiteCommand} from "../createConstructionSite.command";
+import {RootCommandHandler} from "../../../shared/root.commandHandler";
+import {InMemoryEventStoreRepository} from "./createConstructionSite.eventStoreRepository.inMemory";
 
 describe('US-1: Création d\'un chantier', () => {
 
     let eventStoreRepository: InMemoryEventStoreRepository;
-    let commandHandler: GenericCommandHandler;
+    let commandHandler: RootCommandHandler;
 
     beforeEach(() => {
         eventStoreRepository = new InMemoryEventStoreRepository();
-        commandHandler = new GenericCommandHandler(eventStoreRepository);
+        commandHandler = new RootCommandHandler(eventStoreRepository);
     })
 
     test('US-1-AC-1: création réussie', async () => {
 
         //Etant donné que je suis identifié en tant sarah, administrateur,
-        // Le handler générique est créé dans beforeEach
 
         //Quand je créé un chantier avec :
         // titre : Elagage Val louron
@@ -26,10 +25,9 @@ describe('US-1: Création d\'un chantier', () => {
         // Lieu : Le Forum, 65240 VAL LOURON
         const constructionSiteId = randomUUID();
 
-        // ✅ Créer une commande directement (format partagé front/back)
         const command: CreateConstructionSiteCommand = {
-            type: "CreateConstructionSite",
-            id: constructionSiteId,
+            type: CREATE_CONSTRUCTION_SITE_COMMAND_TYPE,
+            aggregateId: constructionSiteId,
             title: "Elagage Val louron",
             startDate: "20/11/2025",
             endDate: "30/11/2025",
@@ -37,17 +35,15 @@ describe('US-1: Création d\'un chantier', () => {
             creatorId: "user-sarah"
         };
 
-        // ✅ Utiliser le handler générique
         const result = await commandHandler.execute(command);
 
-        // Vérifier le résultat
         expect(result.success).toBe(true);
 
         // Alors le chantier doit être créé avec ces infos
         const events = await eventStoreRepository.getEventsByAggregateId(constructionSiteId);
         expect(events).toHaveLength(1);
         const creationEvent = events[0];
-        expect(creationEvent.type).toBe("constructionSiteCreated");
+        expect(creationEvent.type).toBe("constructionSiteCreatedEventType");
         expect(creationEvent.payload).toEqual({
             id: constructionSiteId,
             title: "Elagage Val louron",
