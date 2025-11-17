@@ -1,20 +1,27 @@
 import {beforeEach, describe, expect, test} from "vitest";
 import {randomUUID} from "crypto";
-import {CreateConstructionSiteUseCase} from "../createConstructionSite.useCase";
-import {InMemoryEventStoreRepository} from "../../../shared/eventStoreRepository.inMemory";
+import {
+    ConstructionSiteInMemoryEventStoreRepository
+} from "@workspace/shared/constructionSite/constructionSiteInMemoryEventStoreRepository";
+import {ConstructionSiteCommandHandler} from "@workspace/shared/constructionSite/constructionSiteCommandHandler";
+import {
+    CREATE_CONSTRUCTION_SITE_COMMAND_TYPE, CreateConstructionSiteCommand
+} from "@workspace/shared/constructionSite/createConstructionSite/createConstructionSite";
+
 
 describe('US-1: Création d\'un chantier', () => {
 
-    let eventStoreRepository: InMemoryEventStoreRepository;
+    let eventStoreRepository: ConstructionSiteInMemoryEventStoreRepository;
+    let commandHandler: ConstructionSiteCommandHandler;
 
     beforeEach(() => {
-        eventStoreRepository = new InMemoryEventStoreRepository();
+        eventStoreRepository = new ConstructionSiteInMemoryEventStoreRepository();
+        commandHandler = new ConstructionSiteCommandHandler(eventStoreRepository);
     })
 
     test('US-1-AC-1: création réussie', async () => {
 
         //Etant donné que je suis identifié en tant sarah, administrateur,
-        const createConstructionSiteUseCase = new CreateConstructionSiteUseCase(eventStoreRepository);
 
         //Quand je créé un chantier avec :
         // titre : Elagage Val louron
@@ -22,9 +29,10 @@ describe('US-1: Création d\'un chantier', () => {
         // date de fin : 30 novembre 2025
         // Lieu : Le Forum, 65240 VAL LOURON
         const constructionSiteId = randomUUID();
-        await createConstructionSiteUseCase.execute({
-            type: "CreateConstructionSite",
-            commandId: randomUUID(),
+
+        const command: CreateConstructionSiteCommand = {
+            type: CREATE_CONSTRUCTION_SITE_COMMAND_TYPE,
+            aggregateId: constructionSiteId,
             payload: {
                 id: constructionSiteId,
                 title: "Elagage Val louron",
@@ -33,13 +41,18 @@ describe('US-1: Création d\'un chantier', () => {
                 location: "Le Forum, 65240 VAL LOURON",
                 creatorId: "user-sarah"
             }
-        });
+
+        };
+
+        const result = await commandHandler.execute(command);
+
+        expect(result.success).toBe(true);
 
         // Alors le chantier doit être créé avec ces infos
         const events = await eventStoreRepository.getEventsByAggregateId(constructionSiteId);
         expect(events).toHaveLength(1);
         const creationEvent = events[0];
-        expect(creationEvent.type).toBe("constructionSiteCreated");
+        expect(creationEvent.type).toBe("constructionSiteCreatedEventType");
         expect(creationEvent.payload).toEqual({
             id: constructionSiteId,
             title: "Elagage Val louron",

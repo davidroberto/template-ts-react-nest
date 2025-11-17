@@ -1,65 +1,51 @@
 import {
-    CONSTRUCTION_SITE_CREATED,
-    ConstructionSiteCreated
-} from "./createConstructionSite/constructionSiteCreated.event";
+    CREATE_CONSTRUCTION_SITE_COMMAND_TYPE, createConstructionSite, CreateConstructionSiteCommand
+} from "@workspace/shared/constructionSite/createConstructionSite/createConstructionSite";
+import {
+    CONSTRUCTION_SITE_CREATED_EVENT_TYPE, ConstructionSiteCreated
+} from "@workspace/shared/constructionSite/createConstructionSite/constructionSiteCreated";
+import {
+    applyConstructionSiteCreated
+} from "@workspace/shared/constructionSite/createConstructionSite/applyConstructionSiteCreated";
 
-type ConstructionSiteEvent = ConstructionSiteCreated;
+export type ConstructionSiteCommand = CreateConstructionSiteCommand;
 
-type ConstructionSiteCreate = { id: string, title: string, startDate: string, endDate: string, location: string, creatorId: string};
+export type ConstructionSiteEvent = ConstructionSiteCreated;
 
-export class ConstructionSite {
+export type ConstructionSiteState = {
+    id: string;
+    title: string;
+    startDate: string;
+    endDate: string;
+    location: string;
+    creatorId: string;
+    version: number;
+} | null;
 
-    private id?: string;
-    private title?: string;
-    private startDate?: string;
-    private endDate?: string;
-    private location?: string;
-    private creatorId?: string;
-
-    private version: number = 0;
-    private uncommittedEvents: ConstructionSiteEvent[] = [];
-
-    private constructor() {}
-
-    static create(constructionSiteCreate: ConstructionSiteCreate) {
-        const constructionSite = new ConstructionSite();
-        const {id, title, startDate, endDate, location, creatorId} = constructionSiteCreate;
-        constructionSite.raise(new ConstructionSiteCreated(id, {
-            id,
-            title,
-            startDate,
-            endDate,
-            location,
-            creatorId
-        }));
-        return constructionSite;
+export const decide = (constructionSiteState: ConstructionSiteState, constructionSiteCommand: ConstructionSiteCommand) => {
+    switch (constructionSiteCommand.type) {
+        case CREATE_CONSTRUCTION_SITE_COMMAND_TYPE:
+            return createConstructionSite(constructionSiteState, constructionSiteCommand)
     }
-
-    private raise(event: ConstructionSiteEvent) {
-        this.apply(event);
-        this.uncommittedEvents.push(event);
-    }
-
-    private apply(event: ConstructionSiteEvent) {
-        if (event.type === CONSTRUCTION_SITE_CREATED) {
-            this.id = event.payload.id;
-            this.title = event.payload.title;
-            this.startDate = event.payload.startDate;
-            this.endDate = event.payload.endDate;
-            this.location = event.payload.location;
-            this.creatorId = event.payload.id;
-            this.version += 1;
-        }
-    }
-
-    getUncommittedEvents() {
-        return this.uncommittedEvents;
-    }
-
-    clearUncommittedEvents() {
-        this.uncommittedEvents = [];
-    }
-
-
-
 }
+
+export const apply = (
+    state: ConstructionSiteState,
+    event: ConstructionSiteEvent
+): ConstructionSiteState => {
+    switch (event.type) {
+        case CONSTRUCTION_SITE_CREATED_EVENT_TYPE:
+            return applyConstructionSiteCreated(state, event);
+        default:
+            return state;
+    }
+};
+
+export const fold = (
+    events: ConstructionSiteEvent[],
+): ConstructionSiteState => {
+    return events.reduce(
+        (state, event) => apply(state, event as ConstructionSiteEvent),
+        null as ConstructionSiteState
+    );
+};

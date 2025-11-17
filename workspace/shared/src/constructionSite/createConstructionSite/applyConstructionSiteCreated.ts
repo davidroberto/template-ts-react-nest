@@ -1,9 +1,11 @@
-import {ConstructionSiteState} from "../constructionSite.state";
-import {ConstructionSiteCreatedEvent} from "./constructionSiteCreated.event";
+import {ConstructionSiteState} from "@workspace/shared/constructionSite/constructionSite";
+import {
+    ConstructionSiteCreated
+} from "@workspace/shared/constructionSite/createConstructionSite/constructionSiteCreated";
 
-export const evolveConstructionSiteCreated = (
+export const applyConstructionSiteCreated = (
     _state: ConstructionSiteState,
-    event: ConstructionSiteCreatedEvent
+    event: ConstructionSiteCreated
 ): ConstructionSiteState => {
     return {
         id: event.payload.id,

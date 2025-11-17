@@ -1,4 +1,4 @@
-export type DomainEvent = {
+export type Event = {
     type: string;
     aggregateId: string;
     payload: {};
