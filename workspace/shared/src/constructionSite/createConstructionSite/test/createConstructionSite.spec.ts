@@ -1,9 +1,11 @@
 import {beforeEach, describe, expect, test} from "vitest";
 import {randomUUID} from "crypto";
 import {
-    ConstructionSiteInMemoryEventStoreRepository
+    appendConstructionSiteEvents,
+    loadConstructionSiteEvents,
+    clearAllEvents
 } from "@workspace/shared/constructionSite/constructionSiteInMemoryEventStoreRepository";
-import {ConstructionSiteCommandHandler} from "@workspace/shared/constructionSite/constructionSiteCommandHandler";
+import {makeHandleConstructionSiteCommand} from "@workspace/shared/constructionSite/constructionSiteCommandHandler";
 import {
     CREATE_CONSTRUCTION_SITE_COMMAND_TYPE, CreateConstructionSiteCommand
 } from "@workspace/shared/constructionSite/createConstructionSite/createConstructionSite";
@@ -11,12 +13,14 @@ import {
 
 describe('US-1: Création d\'un chantier', () => {
 
-    let eventStoreRepository: ConstructionSiteInMemoryEventStoreRepository;
-    let commandHandler: ConstructionSiteCommandHandler;
+    let handleCommand: ReturnType<typeof makeHandleConstructionSiteCommand>;
 
     beforeEach(() => {
-        eventStoreRepository = new ConstructionSiteInMemoryEventStoreRepository();
-        commandHandler = new ConstructionSiteCommandHandler(eventStoreRepository);
+        clearAllEvents();
+        handleCommand = makeHandleConstructionSiteCommand(
+            appendConstructionSiteEvents,
+            loadConstructionSiteEvents
+        );
     })
 
     test('US-1-AC-1: création réussie', async () => {
@@ -44,12 +48,12 @@ describe('US-1: Création d\'un chantier', () => {
 
         };
 
-        const result = await commandHandler.execute(command);
+        const result = await handleCommand(command);
 
         expect(result.success).toBe(true);
 
         // Alors le chantier doit être créé avec ces infos
-        const events = await eventStoreRepository.getEventsByAggregateId(constructionSiteId);
+        const events = await loadConstructionSiteEvents(constructionSiteId);
         expect(events).toHaveLength(1);
         const creationEvent = events[0];
         expect(creationEvent.type).toBe("constructionSiteCreatedEventType");

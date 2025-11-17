@@ -1,6 +1,4 @@
-import {ConstructionSiteEvent, ConstructionSiteState} from "@workspace/shared/constructionSite/constructionSite";
+import {ConstructionSiteEvent} from "@workspace/shared/constructionSite/constructionSite";
 
-export interface ConstructionSiteEventStoreRepository {
-    append(event: ConstructionSiteEvent): Promise<void>;
-    loadConstructionSite(aggregateId: string): Promise<ConstructionSiteState>;
-}
+export type AppendConstructionSiteEvents = (constructionSiteId: string, events: ConstructionSiteEvent[]) => Promise<void>;
+export type LoadConstructionSiteEvents = (constructionSite: string) => Promise<ConstructionSiteEvent[]>;

@@ -1,22 +1,20 @@
-import {ConstructionSiteEventStoreRepository} from "@workspace/shared/constructionSite/constructionSiteEventStoreRepository";
-import {ConstructionSiteEvent, fold} from "@workspace/shared/constructionSite/constructionSite";
+import {
+    AppendConstructionSiteEvents,
+    LoadConstructionSiteEvents
+} from "@workspace/shared/constructionSite/constructionSiteEventStoreRepository";
+import {ConstructionSiteEvent} from "@workspace/shared/constructionSite/constructionSite";
 
-export class ConstructionSiteInMemoryEventStoreRepository implements ConstructionSiteEventStoreRepository {
+const eventsStore = new Map<string, ConstructionSiteEvent[]>();
 
-    private events: ConstructionSiteEvent[] = [];
+export const appendConstructionSiteEvents: AppendConstructionSiteEvents = async (constructionSiteId, events) => {
+    const existingEvents = eventsStore.get(constructionSiteId) || [];
+    eventsStore.set(constructionSiteId, [...existingEvents, ...events]);
+};
 
-    async append(event: ConstructionSiteEvent) {
-        this.events.push(event);
-    }
+export const loadConstructionSiteEvents: LoadConstructionSiteEvents = async (constructionSiteId) => {
+    return eventsStore.get(constructionSiteId) || [];
+};
 
-    async getEventsByAggregateId(aggregateId: string): Promise<ConstructionSiteEvent[]> {
-        return this.events.filter(event => event.aggregateId === aggregateId);
-    }
-
-    async loadConstructionSite(aggregateId: string): Promise<any> {
-        const events = await this.getEventsByAggregateId(aggregateId);
-        return fold(events);
-
-    }
-
-}
+export const clearAllEvents = () => {
+    eventsStore.clear();
+};
