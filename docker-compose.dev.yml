@@ -27,41 +27,17 @@ services:
         - DOCKERIGNORE_FILE=.dockerignore.dev
     ports:
       - "${BACKEND_HOST_PORT}:${BACKEND_CONTAINER_PORT}"
-    depends_on:
-      - postgres
     networks:
       template-ts-react-fastify-shared:
 
     volumes:
-      - ./datafiles:/app/datafiles
       - ./workspace/backend:/app/workspace/backend
       - ./workspace/shared:/app/workspace/shared
       - ./package.json:/app/package.json
       - /app/node_modules
       - /app/workspace/backend/node_modules
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
-      - JWT_EXPIRES_IN_REFRESH=${JWT_EXPIRES_IN_REFRESH}
       - APP_PORT=${BACKEND_CONTAINER_PORT}
-
-  postgres:
-    image: postgres:14
-    environment:
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "${DB_HOST_PORT}:${DB_PORT}"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    networks:
-      template-ts-react-fastify-shared:
 
 
   nginx:
@@ -71,7 +47,6 @@ services:
       - "443:443"
     volumes:
       - ./nginx/nginx.conf.dev:/etc/nginx/nginx.conf
-      - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
       - frontend
       - backend
@@ -80,10 +55,6 @@ services:
 
     environment:
       - ENV_MODE=${ENV_MODE:-development}
-
-volumes:
-  datafiles:
-  db_data:
 
 networks:
   template-ts-react-fastify-shared:
