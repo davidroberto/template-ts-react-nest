@@ -10,6 +10,7 @@ import {
 import {
     makeHandleCreateConstructionSiteCommand
 } from "@workspace/frontend/modules/constructionSite/createConstructionSite/createconstructionSiteCommandHandler.ts";
+import {expectValidationFailed} from "@workspace/shared/modules/shared/test/expectValidationFailed.ts";
 
 
 
@@ -54,6 +55,10 @@ describe('US-1: Création d\'un chantier', () => {
         expect(result.success).toBe(true);
 
         // Alors le chantier doit être créé avec ces infos
+        // titre : Elagage Val louron
+        // date de début : 20 novembre 2025
+        // date de fin : 30 novembre 2025
+        // Lieu : Le Forum, 65240 VAL LOURON
         const events = await loadConstructionSiteEvents(constructionSiteId);
         expect(events).toHaveLength(1);
         const creationEvent = events[0];
@@ -63,6 +68,40 @@ describe('US-1: Création d\'un chantier', () => {
         expect(creationEvent.payload.dateRange.startDate).toBe("20/11/2025");
         expect(creationEvent.payload.dateRange.endDate).toBe("30/11/2025");
         expect(creationEvent.payload.location).toBe("Le Forum, 65240 VAL LOURON");
+
+
+    })
+
+    test('US-1-AC-2: erreur si date de début après date de fin', async () => {
+
+        //Etant donné que je suis identifié en tant sarah, administratrice
+
+        //Quand je créé un chantier avec :
+        // titre : Elagage Val louron
+        // date de début : 30 novembre 2025
+        // date de fin : 20 novembre 2025
+        // Lieu : Le Forum, 65240 VAL LOURON
+        const constructionSiteId = randomUUID();
+
+        const command: CreateConstructionSiteCommand = {
+            type: CREATE_CONSTRUCTION_SITE_COMMAND_TYPE,
+            aggregateId: constructionSiteId,
+            payload: {
+                id: constructionSiteId,
+                title: "Elagage Val louron",
+                startDate: "30/11/2025",
+                endDate: "20/11/2025",
+                location: "Le Forum, 65240 VAL LOURON",
+            }
+
+        };
+
+        const result = await handleCommand(command);
+
+        // Alors je dois recevoir une erreur « Invalid date range: StartDateAfterEndDate »
+        expectValidationFailed(result, "Invalid date range: StartDateAfterEndDate");
+
+
 
 
     })

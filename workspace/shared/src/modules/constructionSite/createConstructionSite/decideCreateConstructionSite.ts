@@ -41,7 +41,6 @@ export const decideCreateConstructionSite = (
 
     const constructionSiteId = constructionSiteIdResult.value!;
 
-    // Validate DateRange
     const dateRangeResult = createConstructionSiteDateRange(startDate, endDate);
 
     if (!dateRangeResult.success) {
