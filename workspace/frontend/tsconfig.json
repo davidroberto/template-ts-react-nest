@@ -5,7 +5,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client", "@types/react", "@types/react-dom"],
+    "types": ["vite/client", "@types/react", "@types/react-dom", "@types/node"],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -19,7 +19,8 @@
     /* Path mappings */
     "baseUrl": ".",
     "paths": {
-      "@workspace/shared/*": ["../shared/src/*"]
+      "@workspace/shared/*": ["../shared/src/*"],
+      "@workspace/frontend/*": ["./src/*"]
     },
 
     /* Linting */

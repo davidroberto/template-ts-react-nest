@@ -1,7 +1,7 @@
-import {ConstructionSiteState} from "@workspace/shared/constructionSite/constructionSite";
+import {ConstructionSiteState} from "@workspace/shared/modules/constructionSite/constructionSite";
 import {
     ConstructionSiteCreated
-} from "@workspace/shared/constructionSite/createConstructionSite/constructionSiteCreated";
+} from "@workspace/shared/modules/constructionSite/createConstructionSite/constructionSiteCreated";
 
 export const applyConstructionSiteCreated = (
     _state: ConstructionSiteState,
@@ -10,10 +10,8 @@ export const applyConstructionSiteCreated = (
     return {
         id: event.payload.id,
         title: event.payload.title,
-        startDate: event.payload.startDate,
-        endDate: event.payload.endDate,
+        dateRange: event.payload.dateRange,
         location: event.payload.location,
-        creatorId: event.payload.creatorId,
         version: 1
     };
 };

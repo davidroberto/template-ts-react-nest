@@ -1,9 +1,3 @@
 export const greetFromShared = (name: string): string => {
-  return `Hello ${name} from shsssarssssed ss !`;
+  return `Hello ${name} from shared !`;
 };
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-}

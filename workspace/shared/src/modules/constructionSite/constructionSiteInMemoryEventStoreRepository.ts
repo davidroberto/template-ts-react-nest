@@ -1,8 +1,8 @@
 import {
     AppendConstructionSiteEvents,
     LoadConstructionSiteEvents
-} from "@workspace/shared/constructionSite/constructionSiteEventStoreRepository";
-import {ConstructionSiteEvent} from "@workspace/shared/constructionSite/constructionSite";
+} from "@workspace/shared/modules/constructionSite/constructionSiteEventStoreRepository";
+import {ConstructionSiteEvent} from "@workspace/shared/modules/constructionSite/constructionSite";
 
 const eventsStore = new Map<string, ConstructionSiteEvent[]>();
 

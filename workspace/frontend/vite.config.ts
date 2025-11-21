@@ -1,5 +1,6 @@
-// @ts-ignore
+//@ts-expect-error
 import react from '@vitejs/plugin-react';
+//@ts-expect-error
 import path from 'path';
 
 
@@ -36,15 +37,16 @@ export default {
       '@': path.resolve(__dirname, './src'),
       '@src': path.resolve(__dirname, 'src'),
       '@workspace/shared': path.resolve(__dirname, '../shared/src'),
+      '@workspace/frontend': path.resolve(__dirname, './src'),
     },
   },
   optimizeDeps: {
     include: ['@workspace/shared'],
   },
   test: {
-    include: ['src/*.spec.ts', 'src/*.spec.tsx'],
+    include: ['src/**/*.spec.ts', 'src/**/*.spec.tsx'],
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     css: true,
     //setupFiles: './vitest.setup.ts'
   },

@@ -1,31 +1,33 @@
 import {beforeEach, describe, expect, test} from "vitest";
 import {randomUUID} from "crypto";
+
 import {
-    appendConstructionSiteEvents,
-    loadConstructionSiteEvents,
-    clearAllEvents
-} from "@workspace/shared/constructionSite/constructionSiteInMemoryEventStoreRepository";
-import {makeHandleConstructionSiteCommand} from "@workspace/shared/constructionSite/constructionSiteCommandHandler";
+    appendConstructionSiteEvents, clearAllEvents, loadConstructionSiteEvents
+} from "@workspace/shared/modules/constructionSite/constructionSiteInMemoryEventStoreRepository.ts";
 import {
-    CREATE_CONSTRUCTION_SITE_COMMAND_TYPE, CreateConstructionSiteCommand
-} from "@workspace/shared/constructionSite/createConstructionSite/createConstructionSite";
+    CREATE_CONSTRUCTION_SITE_COMMAND_TYPE, type CreateConstructionSiteCommand
+} from "@workspace/shared/modules/constructionSite/createConstructionSite/decideCreateConstructionSite.ts";
+import {
+    makeHandleCreateConstructionSiteCommand
+} from "@workspace/frontend/modules/constructionSite/createConstructionSite/createconstructionSiteCommandHandler.ts";
+
 
 
 describe('US-1: Création d\'un chantier', () => {
 
-    let handleCommand: ReturnType<typeof makeHandleConstructionSiteCommand>;
+    let handleCommand: ReturnType<typeof makeHandleCreateConstructionSiteCommand>;
 
     beforeEach(() => {
         clearAllEvents();
-        handleCommand = makeHandleConstructionSiteCommand(
+        handleCommand = makeHandleCreateConstructionSiteCommand(
             appendConstructionSiteEvents,
             loadConstructionSiteEvents
         );
-    })
+    });
 
     test('US-1-AC-1: création réussie', async () => {
 
-        //Etant donné que je suis identifié en tant sarah, administrateur,
+        //Etant donné que je suis identifié en tant sarah, administratrice
 
         //Quand je créé un chantier avec :
         // titre : Elagage Val louron
@@ -43,7 +45,6 @@ describe('US-1: Création d\'un chantier', () => {
                 startDate: "20/11/2025",
                 endDate: "30/11/2025",
                 location: "Le Forum, 65240 VAL LOURON",
-                creatorId: "user-sarah"
             }
 
         };
@@ -57,14 +58,11 @@ describe('US-1: Création d\'un chantier', () => {
         expect(events).toHaveLength(1);
         const creationEvent = events[0];
         expect(creationEvent.type).toBe("constructionSiteCreatedEventType");
-        expect(creationEvent.payload).toEqual({
-            id: constructionSiteId,
-            title: "Elagage Val louron",
-            startDate: "20/11/2025",
-            endDate: "30/11/2025",
-            location: "Le Forum, 65240 VAL LOURON",
-            creatorId: "user-sarah"
-        });
+        expect(creationEvent.payload.id.value).toBe(constructionSiteId);
+        expect(creationEvent.payload.title).toBe("Elagage Val louron");
+        expect(creationEvent.payload.dateRange.startDate).toBe("20/11/2025");
+        expect(creationEvent.payload.dateRange.endDate).toBe("30/11/2025");
+        expect(creationEvent.payload.location).toBe("Le Forum, 65240 VAL LOURON");
 
 
     })
